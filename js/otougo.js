@@ -58,8 +58,36 @@ Otougo.markers.list = [];
 Otougo.overlay = {};
 Otougo.overlay.list = [];
 
-
-
+Otougo.getLocation = function(callback) {
+	var that = this;
+	if(navigator.geolocation) {
+		var survId = navigator.geolocation.getCurrentPosition(
+			function(position) {
+				that.position.latitude = position.coords.latitude;
+				that.position.longitude = position.coords.longitude;
+				that.position.altitude = position.coords.altitude;
+				if (typeof callback == "function") {
+					callback();
+				}
+			}, 
+			function(error) {
+			    var info = "Erreur lors de la géolocalisation : ";
+			    switch(error.code) {
+				    case error.TIMEOUT: info += "Timeout !"; break;
+				    case error.PERMISSION_DENIED: info += "Vous n’avez pas donné la permission"; break;
+				    case error.POSITION_UNAVAILABLE: info += "La position n’a pu être déterminée"; break;
+				    case error.UNKNOWN_ERROR: info += "Erreur inconnue"; break;
+			    }
+				console.log(info);
+			},
+			{
+				maximumAge:600000
+			});
+	}
+	else {
+	  // Pas de support, proposer une alternative ?
+	}
+};
 
 // Events
 // *********************************************************************************
