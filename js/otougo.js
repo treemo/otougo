@@ -92,6 +92,7 @@ Otougo.getLocation = function(callback) {
 
 // Fonction de démarrage après la géolocalisation
 Otougo.start = function() {
+	this.static.createMarkers();
 	this.createMap();
 };
 
@@ -106,6 +107,23 @@ Otougo.createMap = function() {
 			zoom: 14
 		})
 	});
+};
+
+
+// Fonction statiques
+// *********************************************************************************
+
+// Creation des différents marqueurs affichables
+Otougo.static.createMarkers = function () {
+	// Marqueur de position courante
+	this.markers.list["here"] = {};
+	this.markers.list["here"].url = "images/here.png";
+	this.markers.list["here"].iconSize = [40, 40];
+
+	// Marqueur de position de fin
+	this.markers.list["end"] = {};
+	this.markers.list["end"].url = "images/endflag.png";
+	this.markers.list["end"].iconSize = [50, 54];
 };
 
 // Events
