@@ -27,3 +27,71 @@ var Otougo = {};
 
 // Liste des différentes datas que l'on pourra importer
 Otougo.listData = ["velib", "carpark", "motopark", "pooling"];
+
+// La position courante
+Otougo.position = {};
+Otougo.destination = {};
+Otougo.locate = null;
+
+// Les options par défaut
+Otougo.options = {};
+Otougo.options.zoom = 17;
+
+// Liste des fonctions pour les events
+Otougo.events = {};
+
+// Liste des fonctions statiques
+Otougo.static = {};
+
+// handles pour la position GPS du tracé
+Otougo.handles = {};
+Otougo.handles.start = null;
+Otougo.handles.startElement = null;
+Otougo.handles.end = null;
+Otougo.handles.endElement = null;
+
+// Liste des marqueurs de références
+Otougo.markers = {};
+Otougo.markers.list = [];
+
+// Liste des différents overlay affichables
+Otougo.overlay = {};
+Otougo.overlay.list = [];
+
+
+
+
+// Events
+// *********************************************************************************
+Otougo.events.onMapDragStart = function(e) {
+	Otougo.closeAll();
+};
+
+Otougo.events.onMapDragend = function(e) {
+};
+
+Otougo.events.onMarkerAction = function(marker, action, handle) {
+};
+
+$(document).ready(function() {
+	$("#search #back").bind("click", function() {
+		$(this).closest("#search").find("#dataset").toggle();
+	});
+
+	$("#settings").bind("click", function() {
+		$("#div_settings").toggle();
+	});
+	
+	$("#div_settings #reset").bind("click", function() {
+		Otougo.resetPosition();
+	});
+	
+	$("#div_settings #actual").bind("click", function() {
+		console.log(Otougo.position.latitude);
+		Otougo.events.onMapClick();
+	});
+
+	Otougo.getLocation(function() {
+		Otougo.start();
+	});
+});
