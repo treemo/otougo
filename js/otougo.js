@@ -89,6 +89,11 @@ Otougo.getLocation = function(callback) {
 	}
 };
 
+
+// Fonction de démarrage après la géolocalisation
+Otougo.start = function() {
+};
+
 // Events
 // *********************************************************************************
 Otougo.events.onMapDragStart = function(e) {
