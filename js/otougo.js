@@ -116,14 +116,14 @@ Otougo.createMap = function() {
 // Creation des différents marqueurs affichables
 Otougo.static.createMarkers = function () {
 	// Marqueur de position courante
-	this.markers.list["here"] = {};
-	this.markers.list["here"].url = "images/here.png";
-	this.markers.list["here"].iconSize = [40, 40];
+	Otougo.markers.list["here"] = {};
+	Otougo.markers.list["here"].url = "images/here.png";
+	Otougo.markers.list["here"].iconSize = [40, 40];
 
 	// Marqueur de position de fin
-	this.markers.list["end"] = {};
-	this.markers.list["end"].url = "images/endflag.png";
-	this.markers.list["end"].iconSize = [50, 54];
+	Otougo.markers.list["end"] = {};
+	Otougo.markers.list["end"].url = "images/endflag.png";
+	Otougo.markers.list["end"].iconSize = [50, 54];
 };
 
 // Events
