@@ -92,6 +92,20 @@ Otougo.getLocation = function(callback) {
 
 // Fonction de démarrage après la géolocalisation
 Otougo.start = function() {
+	this.createMap();
+};
+
+Otougo.createMap = function() {
+	var layer = new ol.layer.Tile({ source: new ol.source.OSM()});
+	this.map = new ol.Map({
+		controls: ol.control.defaults(),
+		layers: [layer],
+		target: 'map',
+		view: new ol.View2D({
+			center: ol.proj.transform([this.position.longitude, this.position.latitude], 'EPSG:4326', 'EPSG:3857'),
+			zoom: 14
+		})
+	});
 };
 
 // Events
