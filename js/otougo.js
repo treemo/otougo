@@ -443,8 +443,61 @@ Otougo.static.calculateRoute = function() {
 				});
 				Otougo.map.addOverlay(handle);
     		}
-
-	    	$("#div_route .content").html("eeeeeee");
+			//Affichage de route_instructions
+			var instructions = data.route_instructions;
+			
+			$("#div_route .content").html('<ul class="list-group"></ul>');
+			var end = data.route_summary.end_point;
+			
+			for (var i = 0; i < instructions.length; i++) {
+				//INSTRUCTION
+				var tourner = instructions[i][0];
+				//Conversion int en instruction
+				switch (tourner){
+					case '1':
+						tourner = '<span class="glyphicon glyphicon-arrow-up"></span>';
+						break;
+					case '2':
+					case '3':
+					case '4':
+						tourner = '<span class="glyphicon glyphicon-arrow-right"></span>';
+						break;
+					case '5':
+						tourner = '<span class="glyphicon glyphicon-arrow-down"></span>';
+						break;
+					case '6':
+					case '7':
+					case '8':
+						tourner = '<span class="glyphicon glyphicon-left"></span>';
+						break;
+					case '15':
+						tourner = '<span class="glyphicon glyphicon-flag"></span>';
+						break;
+					default:
+						tourner = '<span class="glyphicon glyphicon-arrow-up"></span>';
+						break;
+				}
+				
+				//DISTANCE
+				var distance = instructions[i][5];
+				if (distance)
+					distance = 'Dans ' + distance;
+					
+				//RUE
+				var rue = instructions[i][1];
+				if (i == instructions.length - 1)
+					rue = end;
+				
+				//TEMPS
+				var temps = instructions[i][4];
+				if (temps >= 60 )
+					temps = math.round(temps / 60) + 'm';
+				else
+					temps = temps + 's';
+					
+				//Ajout de l'élément
+				$("#div_route .content ul").append('<li class="list-group-item" style="color: black">' + distance + ' ' + tourner + ' ' + rue + ' <div style="float: right">' + temps + '</div></li>');
+			}
 	    	$("#div_route").show();
     	}
     });
