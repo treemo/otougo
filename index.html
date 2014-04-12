@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Otougo - Make your mobility easy</title>
+		<title>Otougo - Savoir se déplacer intelligement</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="icon" type="image/png" href="favicon.png" />
 
@@ -15,7 +15,7 @@
 		<script src="js/jquery-ui-1.10.4.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>		
 		<script src="js/ol.js"></script>
-		<script src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
+		<script src="//maps.google.com/maps/api/js?v=3.2&sensor=false"></script>
 
 		<script src="js/otougo.js"></script>
 	</head>
@@ -27,18 +27,17 @@
 		</div>
 		
 		<div id="div_settings">
-			<a class="actual">Position actuelle</a>
-			<hr />
-			<a class="route">Itinéraire</a>
+			<a class="close">X</a>
+			<a class="route btn btn-primary">Itinéraire</a>
 		</div>
 		
 		<div id="div_route">
-			<a class="close">Fermer</a>
+			<a class="close">X</a>
 			<div class="content">Aucun intinéraire défini</div>
 		</div>
 		
 		<div id="div_dialog">
-			<a class="close">Fermer</a><br />
+			<a class="close">X</a><br />
 			<div>
 			<a class="btn btn-success endpoint">Choisir comme destination</a>
 			<a class="btn btn-danger delete">Supprimer</a>
@@ -46,7 +45,26 @@
 			<hr />
 			<div class="content"> </div>
 			<hr />
-			Partager
+			<a class="btn btn-info sharing">Partager</a>
+		</div>
+		
+		<div id="div_sharing">
+			<a class="close">X</a><br />
+			<div class="content">
+				<div class="form-group">
+    				<input type="email" class="form-control" id="exampleInputEmail" placeholder="Email du destinataire" />
+  				</div>
+				<div class="form-group">
+    				<input type="name" class="form-control" id="exampleInputName" placeholder="Votre nom" />
+  				</div>
+				<div class="form-group">
+					<textarea class="form-control" rows="3">Je serais à {{POSITION}} dans {{TIMELEFT}}, tu peux me rejoindre.</textarea>
+  				</div>
+				<div class="form-group">
+					<a class="btn btn-primary">Facebook</a>
+					<a class="btn btn-success send pull-right">Envoyer</a>
+  				</div>
+			</div>
 		</div>
 		
 		<div id="search">
