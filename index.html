@@ -5,8 +5,7 @@
 		<title>Otougo - Make your mobility easy</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="icon" type="image/png" href="favicon.png" />
-	
-		<link href='http://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
+
 		<link rel="stylesheet" href="css/normalize.css" />
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/ol.css" />
@@ -49,15 +48,11 @@
 			<div id="back">
 				<a> </a>
 			</div>
-			<ul id="dataset">
-				<li>Parking voitures</li>
-				<li>Parking 2 roues</li>
-				<li>Vélibs</li>
-				<li>Metro</li>
-				<li>tramways</li>
-				<li>Autolibs</li>
-				<li>Aire covoiturage</li>
-			</ul>
+			<div id="dataset">
+				<button type="button" data-rel="common" class="common btn btn-primary">Transport en commun</button><br />
+				<button type="button" data-rel="cycle" class="cycle btn btn-primary">Bornes vélo</button><br />
+				<button type="button" data-rel="carpark" class="carpark btn btn-primary">Parkings voitures</button><br />
+			</div>
 		</div>
 	</body>
 </html>
