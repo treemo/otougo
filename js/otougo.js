@@ -223,19 +223,23 @@ Otougo.static.setHandle = function(marker, type, handle) {
 	Otougo.static.calculateRoute();
 };
 
+// TODO getBounds() pour d 
+// limité à d < 20000m
+// t => dernier delai modification depuis cette là
+// f = train / velo / 
 Otougo.static.loadMarker = function(type) {
-	// TODO getBounds() pour d 
-	// limité à d < 20000m
-	// t => dernier delai modification depuis cette là
-	// f = train / velo / 
-
+	// Calcul du rayon à partir du centre de la vue.
+	var center = ol.proj.transform(Otougo.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
+/*	if (Otougo.oldEpicenter != ) {
+		
+	}*/
+	
+	var zoom = Otougo.map.getView().getZoom();
+	
 	// Vérif type
 	if (!$.inArray(type, Otougo.listData)) {
 		return false;
 	}
-	// Calcul du rayon à partir du centre de la vue.
-	var center = ol.proj.transform(Otougo.map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
-	var zoom = Otougo.map.getView().getZoom();
 	
 	var d = 2000;
 	if (zoom < 10) { d = 200000; }
@@ -275,38 +279,57 @@ Otougo.static.loadMarker = function(type) {
 			  				if (temp > 2 || temp < 0) {
 			  					temp = 3;
 			  				}
+
 			    			var element = Otougo.static.createMarkerData("markers", Otougo.markers.list[type][temp], el);
 							handle = new ol.Overlay({
 								position: ol.proj.transform([el["longitude"], el["latitude"]], 'EPSG:4326', 'EPSG:3857'),
 							  	element: element
 							});
 							
-							 element.bind("click", function(e) {
+							$(element).attr("data-name", el["name"]);
+							$(element).attr("data-nbAvailable", el["nbAvailable"]);
+							$(element).attr("data-total", el["total"]);
+							$(element).attr("data-lastUpdate", el["lastUpdate"]);
+							$(element).attr("data-type", index);
+
+						 	element.bind("click", function(e) {
 						  	    if ($(this).hasClass('noclick')) {
 							        $(this).removeClass('noclick');
 							        return false;
 							    }
 						  		
-								var el = this;
+								var that = this;
 								var size = parseInt($(this).width()) / 2;
 								$("#div_dialog").css("top", $(this).offset().top);
 								$("#div_dialog").css("left", $(this).offset().left + size);
+
+								// On remplit la zone de datas
+								$temp = "" + $(this).attr("data-name") + "<br />";
+								if ($(this).attr("data-type") == "carpark") {
+									$temp += "Places libres: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+								}
+								else {
+									$temp += "Quantité restante: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+								}
+								
+								$("#div_dialog .content").html($temp);
+
 								$("#div_dialog").show();
 								
 								$("#div_dialog .endpoint").unbind("click");
 								$("#div_dialog .endpoint").bind("click", function() {
-									if (!$(el).hasClass("end")) {
-										Otougo.events.onMarkerAction(el, "endpoint", Otougo.handles.start);
+									if (!$(that).hasClass("end")) {
+										Otougo.events.onMarkerAction(that, "endpoint", Otougo.handles.start);
 									}
 								});
 
 								$("#div_dialog .delete").unbind("click");
 								$("#div_dialog .delete").bind("click", function() {
-									if ($(el).hasClass("start")) {
-										Otougo.events.onMarkerAction(el, "delete", Otougo.handles.start);
+									if ($(that).hasClass("start")) {
+										Otougo.events.onMarkerAction(that, "delete", Otougo.handles.start);
 									}
 									else {
-										Otougo.events.onMarkerAction(el, "delete", Otougo.handles.end);
+										Otougo.events.onMarkerAction(that, "delete", Otougo.handles.end);
 									}
 								});
 							});
@@ -339,6 +362,10 @@ Otougo.static.createMarker = function(type, data) {
 		var size = parseInt($(this).width()) / 2;
 		$("#div_dialog").css("top", $(this).offset().top);
 		$("#div_dialog").css("left", $(this).offset().left + size);
+		
+		// On remplit la zone de datas
+		$("#div_dialog .content").html("");
+		
 		$("#div_dialog").show();
 		
 		$("#div_dialog .endpoint").unbind("click");
@@ -363,6 +390,7 @@ Otougo.static.createMarker = function(type, data) {
 			Otougo.closeAll();
 		},
 		stop: function(e) {
+			Otougo.static.removeGPS(); 
 			Otougo.static.calculateRoute();
 		}
 	});
@@ -449,6 +477,10 @@ Otougo.static.decodeGeometry = function(encoded, precision) {
 	return array;
 };
 
+Otougo.static.removeGPS = function() {
+	$(".gps_route").remove();
+};
+
 // Events
 // *********************************************************************************
 Otougo.events.onMapDragStart = function(e) {
@@ -474,6 +506,7 @@ Otougo.events.onMarkerAction = function(marker, action, handle) {
 			Otougo.static.setHandle(marker, "end", handle);
 			Otougo.static.unsetHandle("start");
 
+			Otougo.static.removeGPS(); 
 			Otougo.static.calculateRoute();
 			break;
 		case "delete":
@@ -488,6 +521,7 @@ Otougo.events.onMarkerAction = function(marker, action, handle) {
 				Otougo.static.loadMarker(Otougo.selection);
 			}
 
+			Otougo.static.removeGPS(); 
 			$(marker).remove();
 			break;
 	}
@@ -537,18 +571,25 @@ $(document).ready(function() {
 	});
 	
 	$("#div_settings #actual").bind("click", function() {
-		console.log(Otougo.position.latitude);
 		Otougo.events.onMapClick();
 	});
 
 	$("#div_settings .route").bind("click", function() {
 		Otougo.closeAll();
+		if ($("img.gps_route").length <= 0) {
+			$("#div_route .content").html("Aucun intinéraire défini");
+		}
 		$("#div_route").show();
 	});
 
 	$("#div_route .close").bind("click", function() {
 		Otougo.closeAll();
 		$("#div_route").hide();
+	});
+
+	$("#div_dialog .close").bind("click", function() {
+		Otougo.closeAll();
+		$("#div_dialog").hide();
 	});
 
 	$("#dataset button").bind("click", function() {
