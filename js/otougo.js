@@ -26,7 +26,7 @@
 
 /* BUGS 
  *
- * Quand on met un marqueur, qu'on le déplace, dès qu'on zoom, sa position n'est plus valide.
+ * Quand on met un marqueur, qu'on le déplace, dès qu'on zoom, sa position n'est plus valide. => draggable retiré.
  * 
  * */
 
@@ -139,7 +139,6 @@ Otougo.createMap = function() {
 	});
 };
 
-
 // Fonction statiques
 // *********************************************************************************
 
@@ -156,6 +155,8 @@ Otougo.closeAll = function() {
 	
 	// Fenêtre de tracé GPS 
 	$("#div_route").hide();
+	
+	$("#div_sharing").hide();
 };
 
 // Creation des différents marqueurs affichables
@@ -291,6 +292,7 @@ Otougo.static.loadMarker = function(type) {
 							$(element).attr("data-total", el["total"]);
 							$(element).attr("data-lastUpdate", el["lastUpdate"]);
 							$(element).attr("data-type", index);
+							$(element).attr("data-bootclass", (temp == 0?"danger":(temp == 1?"default":"success")));
 
 						 	element.bind("click", function(e) {
 						  	    if ($(this).hasClass('noclick')) {
@@ -304,23 +306,24 @@ Otougo.static.loadMarker = function(type) {
 								$("#div_dialog").css("left", $(this).offset().left + size);
 
 								// On remplit la zone de datas
-								$temp = "" + $(this).attr("data-name") + "<br />";
+								temp = "" + $(this).attr("data-name") + "<br />";
 								if ($(this).attr("data-type") == "carpark") {
-									$temp += "Places libres: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+									temp += "Places libres: <div class='label  label-" +  $(this).attr("data-bootclass") + "'>" + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
 								}
 								else {
-									$temp += "Quantité restante: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+									temp += "Quantité restante: <div class='label  label-" +  $(this).attr("data-bootclass") + "'>" + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
 								}
+								temp += "</div>";
 								
-								$("#div_dialog .content").html($temp);
+								$("#div_dialog .content").html(temp);
 
 								$("#div_dialog").show();
 								
 								$("#div_dialog .endpoint").unbind("click");
 								$("#div_dialog .endpoint").bind("click", function() {
-									if (!$(that).hasClass("end")) {
-										Otougo.events.onMarkerAction(that, "endpoint", Otougo.handles.start);
-									}
+									// Création d'un marqueur
+									var element = Otougo.static.createMarker("end", Otougo.markers.list[type][temp], el);
+									Otougo.events.onMarkerAction(that, "endpoint", Otougo.handles.start);
 								});
 
 								$("#div_dialog .delete").unbind("click");
@@ -367,7 +370,7 @@ Otougo.static.createMarker = function(type, data) {
 		$("#div_dialog .content").html("");
 		
 		$("#div_dialog").show();
-		
+
 		$("#div_dialog .endpoint").unbind("click");
 		$("#div_dialog .endpoint").bind("click", function() {
 			if (!$(el).hasClass("end")) {
@@ -384,7 +387,10 @@ Otougo.static.createMarker = function(type, data) {
 				Otougo.events.onMarkerAction(el, "delete", Otougo.handles.end);
 			}
 		});
-	}).draggable({
+	});
+	
+	/*
+	.draggable({
 		start: function(e) {
 			$(this).addClass('noclick');
 			Otougo.closeAll();
@@ -393,7 +399,7 @@ Otougo.static.createMarker = function(type, data) {
 			Otougo.static.removeGPS(); 
 			Otougo.static.calculateRoute();
 		}
-	});
+	});*/
 	return element;
 };
 
@@ -558,22 +564,30 @@ Otougo.events.onMapClick = function(e) {
 };
 
 $(document).ready(function() {
+	$("#search #back").unbind("click");
 	$("#search #back").bind("click", function() {
 		$(this).closest("#search").find("#dataset").toggle();
 	});
 
+	$("#settings").unbind("click");
 	$("#settings").bind("click", function() {
 		$("#div_settings").toggle();
 	});
 	
+	$("#div_settings #reset").unbind("click");
 	$("#div_settings #reset").bind("click", function() {
 		Otougo.resetPosition();
 	});
 	
+	$("#div_settings #actual").unbind("click");
 	$("#div_settings #actual").bind("click", function() {
-		Otougo.events.onMapClick();
+		Otougo.getLocation(function() {
+			Otougo.static.unsetHandle("start");
+			Otougo.static.createMarker("start", "here");
+		});
 	});
 
+	$("#div_settings .route").unbind("click");
 	$("#div_settings .route").bind("click", function() {
 		Otougo.closeAll();
 		if ($("img.gps_route").length <= 0) {
@@ -582,16 +596,41 @@ $(document).ready(function() {
 		$("#div_route").show();
 	});
 
+	$("#div_route .close").unbind("click");
 	$("#div_route .close").bind("click", function() {
 		Otougo.closeAll();
 		$("#div_route").hide();
 	});
 
+	$("#div_dialog .close").unbind("click");
 	$("#div_dialog .close").bind("click", function() {
 		Otougo.closeAll();
 		$("#div_dialog").hide();
 	});
+	
+	$("#div_dialog .sharing").unbind("click");
+	$("#div_dialog .sharing").bind("click", function() {
+		$("#div_sharing").show();
+		
+	});
 
+	$("#div_settings .close").unbind("click");
+	$("#div_settings .close").bind("click", function() {
+		Otougo.closeAll();
+		$("#div_settings").hide();
+	});
+
+	$("#div_sharing .close").unbind("click");
+	$("#div_sharing .close").bind("click", function() {
+		$("#div_sharing").hide();
+	});
+	
+	$("#div_sharing .send").unbind("click");
+	$("#div_sharing .send").bind("click", function() {
+		$("#div_sharing").hide();
+	});
+
+	$("#dataset button").unbind("click");
 	$("#dataset button").bind("click", function() {
 		$("#dataset button").removeClass("btn-success");
 		$("#dataset button").addClass("btn-primary");
