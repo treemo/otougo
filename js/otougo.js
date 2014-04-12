@@ -351,7 +351,113 @@ Otougo.static.getGeocoding = function(lat, lng) {
     $.getJSON("//nominatim.openstreetmap.org/reverse?format=json&json_callback=OSRM.JSONP.callbacks.reverse_geocoder_target&accept-language=fr&lat=" + lat + "&lon=" + lng , function(data) {
         console.log(data);
     });
-};
+}
+
+Otougo.static.getInformationMarker = function(id) {
+ $.getJSON("//app.otougo.com/get-marker.php?d=" + id , function(data) {
+    	if (data != []) {
+  			console.log(data);
+    	}    
+    });
+}
+
+Otougo.static.getInformation = function(id) {
+	 $.getJSON("//app.otougo.com/get-marker-info.php?id=" + id , function(data) {
+    	if (data != []) {
+  			$(".markers").remove();
+  			for(var index in data) {
+  				var attr = data[index];
+  				
+  				switch(index) {
+  					case "common":
+			  			for(var i in attr) {
+			  				var el = attr[i];
+			    			var element = Otougo.static.createMarkerData("markers", Otougo.markers.list[type][0], el);
+							handle = new ol.Overlay({
+								position: ol.proj.transform([el["longitude"], el["latitude"]], 'EPSG:4326', 'EPSG:3857'),
+							  	element: element
+							});
+							Otougo.map.addOverlay(handle);
+						}
+  						break;
+  					case "carpark":
+  					case "cycle":
+			  			for(var i in attr) {
+			  				var el = attr[i];
+			  				
+			  				var total = el.total;
+			  				var avail = el.nbAvailable;
+			  				
+			  				var temp = Math.floor(3 * (parseInt(avail) / parseInt(total)));
+			  				
+			  				if (temp > 2 || temp < 0) {
+			  					temp = 3;
+			  				}
+
+			    			var element = Otougo.static.createMarkerData("markers", Otougo.markers.list[type][temp], el);
+							handle = new ol.Overlay({
+								position: ol.proj.transform([el["longitude"], el["latitude"]], 'EPSG:4326', 'EPSG:3857'),
+							  	element: element
+							});
+							
+							$(element).attr("data-name", el["name"]);
+							$(element).attr("data-nbAvailable", el["nbAvailable"]);
+							$(element).attr("data-total", el["total"]);
+							$(element).attr("data-lastUpdate", el["lastUpdate"]);
+							$(element).attr("data-type", index);
+
+						 	element.bind("click", function(e) {
+						  	    if ($(this).hasClass('noclick')) {
+							        $(this).removeClass('noclick');
+							        return false;
+							    }
+						  		
+								var that = this;
+								var size = parseInt($(this).width()) / 2;
+								$("#div_dialog").css("top", $(this).offset().top);
+								$("#div_dialog").css("left", $(this).offset().left + size);
+
+								// On remplit la zone de datas
+								$temp = "" + $(this).attr("data-name") + "<br />";
+								if ($(this).attr("data-type") == "carpark") {
+									$temp += "Places libres: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+								}
+								else {
+									$temp += "Quantité restante: " + $(this).attr("data-nbAvailable") +  "/" + $(this).attr("data-total");
+								}
+								
+								$("#div_dialog .content").html($temp);
+
+								$("#div_dialog").show();
+								
+								$("#div_dialog .endpoint").unbind("click");
+								$("#div_dialog .endpoint").bind("click", function() {
+									if (!$(that).hasClass("end")) {
+										Otougo.events.onMarkerAction(that, "endpoint", Otougo.handles.start);
+									}
+								});
+
+								$("#div_dialog .delete").unbind("click");
+								$("#div_dialog .delete").bind("click", function() {
+									if ($(that).hasClass("start")) {
+										Otougo.events.onMarkerAction(that, "delete", Otougo.handles.start);
+									}
+									else {
+										Otougo.events.onMarkerAction(that, "delete", Otougo.handles.end);
+									}
+								});
+							});
+
+							Otougo.map.addOverlay(handle);
+						}
+  						break;
+  				}
+  				
+    		}
+    	}    
+    });
+}
+
 
 Otougo.static.createMarker = function(type, data) {
 	var element=  $('<img class="' + type + '" src="' + Otougo.markers.list[data].url + '">').css({marginTop: '-150%', marginLeft: '-50%', cursor: 'pointer'});

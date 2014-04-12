@@ -45,6 +45,8 @@ body {
 }
 
 #div_route {
+	max-height: 600;
+	overflow-y: auto;
 	display: none;
 	position: absolute;
 	margin: 0 auto;
