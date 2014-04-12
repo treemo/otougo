@@ -474,7 +474,7 @@ Otougo.static.calculateRoute = function() {
 					case '6':
 					case '7':
 					case '8':
-						tourner = '<span class="glyphicon glyphicon-left"></span>';
+						tourner = '<span class="glyphicon glyphicon-arrow-left"></span>';
 						break;
 					case '15':
 						tourner = '<span class="glyphicon glyphicon-flag"></span>';
@@ -497,7 +497,7 @@ Otougo.static.calculateRoute = function() {
 				//TEMPS
 				var temps = instructions[i][4];
 				if (temps >= 60 )
-					temps = math.round(temps / 60) + 'm';
+					temps = Math.round(temps / 60) + 'm';
 				else
 					temps = temps + 's';
 					
