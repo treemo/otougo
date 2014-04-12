@@ -41,6 +41,39 @@ body {
 	cursor: pointer;
 }
 
+#div_route {
+	display: none;
+	position: absolute;
+	margin: 0 auto;
+	width: 400px;
+	margin-left: -200px;
+	top: 50px;;
+	bottom: 50px;;
+	padding: 10px;
+	left: 50%;
+	z-index: 99;
+	background-image: url("/images/background.jpg");
+	background-size: cover;
+	background-position: center;
+	border-radius: 10px;
+	
+	color: white;
+	opacity: 0.8;
+	border: 2px solid black;
+}
+
+#div_route .content {
+	margin-top: 18px;
+}
+
+#div_route a {
+	color: white;
+	cursor: pointer;
+	opacity: 1;
+	text-shadow: none;
+	font-size: 14px;
+}
+
 #search {
 	position: absolute;
 	top: 10px;
@@ -96,6 +129,31 @@ body {
 	border: 2px solid black;
 } 
 
+#div_settings {
+	display: none;
+	position: absolute;
+	margin: 0 auto;
+	width: 300px;
+	margin-left: -150px;
+	padding: 20px;
+	left: 50%;
+	bottom: 100px;
+	z-index: 99;
+	background-image: url("/images/background.jpg");
+	background-size: cover;
+	background-position: center;
+	border-radius: 10px;
+	
+	color: white;
+	opacity: 0.8;
+	border: 2px solid black;
+}
+
+#div_settings a {
+	color: white;
+	cursor: pointer;
+}
+
 #settings {
 	position: absolute;
 	margin: 0 auto;
@@ -116,25 +174,6 @@ body {
 	cursor: pointer;
 }
 
-#div_settings {
-	display: none;
-	position: absolute;
-	margin: 0 auto;
-	width: 300px;
-	margin-left: -150px;
-	padding: 20px;
-	left: 50%;
-	bottom: 100px;
-	z-index: 99;
-	background-image: url("/images/background.jpg");
-	background-size: cover;
-	background-position: center;
-	border-radius: 10px;
-	
-	color: white;
-	opacity: 0.8;
-	border: 2px solid black;
-}
 #settings a {
 	display: block;
 	background-image: url("/images/icon-settings.png");
